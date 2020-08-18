@@ -9,9 +9,9 @@ import octoprint.events
 import pigpio
 from octoprint.util import RepeatedTimer
 pi = pigpio.pi()
-R_pwm=29
-G_pwm=28
-B_pwm=27
+R_pwm=28
+G_pwm=27
+B_pwm=24
 pi.set_PWM_dutycycle(R_pwm, 0)
 pi.set_PWM_dutycycle(G_pwm, 0)
 pi.set_PWM_dutycycle(B_pwm, 0)
