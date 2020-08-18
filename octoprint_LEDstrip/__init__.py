@@ -94,9 +94,19 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
     def on_after_startup(self):
         self._logger.info("----------Starting LED strip plugin----------")
         self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
+        self._logger.info("Hello World! (more: %s)" % self._settings.get(["test"]))
+
+
+
+
+
+
 
     def on_shutdown(self):
         self._logger.info("----------Shutting LED strip plugin down----------")
+        self.BlinkTimer.cancel()
+        self.fadeRGB(0,0,0)
+
 
     def on_print_progress(self, storage, path, progress):
         self._logger.info(progress)
