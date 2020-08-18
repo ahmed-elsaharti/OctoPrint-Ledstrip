@@ -16,7 +16,7 @@ pi.set_PWM_dutycycle(R_pwm, 0)
 pi.set_PWM_dutycycle(G_pwm, 0)
 pi.set_PWM_dutycycle(B_pwm, 0)
 
-class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
+class LEDstripPlugin(octoprint.plugin.StartupPlugin,
                        octoprint.plugin.ShutdownPlugin,
                        octoprint.plugin.SettingsPlugin,
                        octoprint.plugin.AssetPlugin,
@@ -148,8 +148,8 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
         except KeyError:  # The event isn't supported
             pass
 
-__plugin_name__ = "OctoLED"
+__plugin_name__ = "LEDstrip"
 __plugin_version__ = "0.1.0"
 __plugin_description__ = "Plugin to control 4 pin RGB LED strips"
 __plugin_pythoncompat__ = ">=2.7,<4"
-__plugin_implementation__ = OctoLEDPlugin()
+__plugin_implementation__ = LEDstripPlugin()
