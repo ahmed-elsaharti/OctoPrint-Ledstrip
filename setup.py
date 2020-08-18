@@ -33,7 +33,7 @@ plugin_url = "https://github.com/ahmed-elsaharti/OctoPrint-Ledstrip"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = []
+plugin_requires = ["pigpio"]
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
