@@ -87,7 +87,7 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
             elif self.BVal > BFinal:
                 self.BVal -= 1
                 pi.set_PWM_dutycycle(B_pwm, self.BVal)
-            time.sleep(0.03)
+            time.sleep(0.01)
             self._logger.info("R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
 
 
