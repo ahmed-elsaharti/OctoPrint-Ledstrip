@@ -87,7 +87,7 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
             elif self.BVal > BFinal:
                 self.BVal -= 1
                 pi.set_PWM_dutycycle(B_pwm, self.BVal)
-            time.sleep(0.01)
+            time.sleep(0.03)
             self._logger.info("R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
 
 
@@ -97,9 +97,6 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
 
     def on_shutdown(self):
         self._logger.info("----------Shutting LED strip plugin down----------")
-        self.BlinkTimer.cancel()
-        self.fadeRGB(0,0,0)
-
 
     def on_print_progress(self, storage, path, progress):
         self._logger.info(progress)
@@ -110,34 +107,39 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
 
     def on_event(self, event, payload):
         try:
-            self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
             self.current_state=self.supported_events[event]
             self._logger.info(self.current_state)
             if self.current_state == "resumed":
-                self.BlinkTimer.cancel()
+                if self.BlinkTimer != 0:
+                    self.BlinkTimer.cancel()
                 self.fadeRGB(100-int(self.printprogress),int(self.printprogress),0)
             if self.current_state == "idle":
-                self.BlinkTimer.cancel()
+                if self.BlinkTimer != 0:
+                    self.BlinkTimer.cancel()
                 self.fadeRGB(100,100,100)
             if self.current_state == "disconnected":
-                self.BlinkTimer.cancel()
+                if self.BlinkTimer != 0:
+                    self.BlinkTimer.cancel()
                 self.fadeRGB(0,0,0)
             if self.current_state == "success":
-                self.BlinkTimer.cancel()
+                if self.BlinkTimer != 0:
+                    self.BlinkTimer.cancel()
                 self.blinkR=0
                 self.blinkG=100
                 self.blinkB=0
                 self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
                 self.BlinkTimer.start()
             if self.current_state == "failed":
-                self.BlinkTimer.cancel()
+                if self.BlinkTimer != 0:
+                    self.BlinkTimer.cancel()
                 self.blinkR=100
                 self.blinkG=0
                 self.blinkB=0
                 self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
                 self.BlinkTimer.start()
             if self.current_state == "paused":
-                self.BlinkTimer.cancel()
+                if self.BlinkTimer != 0:
+                    self.BlinkTimer.cancel()
                 self.blinkR=0
                 self.blinkG=0
                 self.blinkB=100
@@ -147,7 +149,7 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
             pass
 
 __plugin_name__ = "OctoLED"
-__plugin_version__ = "1.0.0"
+__plugin_version__ = "0.1.0"
 __plugin_description__ = "Plugin to control 4 pin RGB LED strips"
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = OctoLEDPlugin()
