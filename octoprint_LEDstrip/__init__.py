@@ -110,7 +110,7 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
 
     def on_event(self, event, payload):
         try:
-					  self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
+            self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
             self.current_state=self.supported_events[event]
             self._logger.info(self.current_state)
             if self.current_state == "resumed":
