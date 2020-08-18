@@ -9,9 +9,9 @@ import octoprint.events
 import pigpio
 from octoprint.util import RepeatedTimer
 pi = pigpio.pi()
-R_pwm=28
-G_pwm=27
-B_pwm=24
+R_pwm=20
+G_pwm=16
+B_pwm=19
 pi.set_PWM_dutycycle(R_pwm, 0)
 pi.set_PWM_dutycycle(G_pwm, 0)
 pi.set_PWM_dutycycle(B_pwm, 0)
@@ -94,13 +94,6 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
     def on_after_startup(self):
         self._logger.info("----------Starting LED strip plugin----------")
         self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-        self._logger.info("Hello World! (more: %s)" % self._settings.get(["test"]))
-
-
-
-
-
-
 
     def on_shutdown(self):
         self._logger.info("----------Shutting LED strip plugin down----------")
@@ -117,6 +110,7 @@ class OctoLEDPlugin(octoprint.plugin.StartupPlugin,
 
     def on_event(self, event, payload):
         try:
+					  self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
             self.current_state=self.supported_events[event]
             self._logger.info(self.current_state)
             if self.current_state == "resumed":
