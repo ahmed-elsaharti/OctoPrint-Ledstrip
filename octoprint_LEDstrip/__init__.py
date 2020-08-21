@@ -102,13 +102,13 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
 
     def on_after_startup(self):
         self._logger.info("----------Starting LED strip plugin----------")
-        self._logger.info("----------TEST----------")
         if self._settings.get(["Rpin"]) != "" and self._settings.get(["Gpin"]) != "" and self._settings.get(["Bpin"]) != "": 
             self.R_pwm=int(self._settings.get(["Rpin"]))
             self.G_pwm=int(self._settings.get(["Gpin"]))
             self.B_pwm=int(self._settings.get(["Bpin"]))
         self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-        self.setRGB(0,0,0)
+        if self.current_state != "idle":
+            self.setRGB(0,0,0)
 
     def on_shutdown(self):
         self._logger.info("----------Shutting LED strip plugin down----------")
