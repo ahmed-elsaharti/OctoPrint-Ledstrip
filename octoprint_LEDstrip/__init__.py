@@ -42,12 +42,12 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
 
     def blinkRGB(self):       
         if self.blinker == 1:
-           self._logger.info("BLINK OFF!!")
+           self._logger.info("********RGB BLINK OFF********")
            self.setRGB(0,0,0)
            self.RVal=self.GVal=self.BVal=0
            self.blinker = 0                                                                                                     
         else:
-           self._logger.info("BLINK ON!!")
+           self._logger.info("********RGB BLINK ON********")
            self.setRGB(self.blinkR,self.blinkG,self.blinkB)
            self.RVal=self.blinkR
            self.GVal=self.blinkG
@@ -56,19 +56,19 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
 
     def setRGB(self,RFinal,GFinal,BFinal):  
         if self.R_pwm != "" and self.G_pwm != "" and self.B_pwm != "":
-            self._logger.info("R "+str(RFinal)+" G "+str(GFinal)+" B "+str(BFinal))
+            #self._logger.info("R "+str(RFinal)+" G "+str(GFinal)+" B "+str(BFinal))
             self.pi.set_PWM_dutycycle(self.R_pwm, RFinal)
             self.pi.set_PWM_dutycycle(self.G_pwm, GFinal)
             self.pi.set_PWM_dutycycle(self.B_pwm, BFinal)
             self.RVal=RFinal
             self.GVal=GFinal
             self.BVal=BFinal
-            self._logger.info("R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
+            self._logger.info("LEDstrip set to R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
         else:
             self.RVal=RFinal
             self.GVal=GFinal
             self.BVal=BFinal
-            self._logger.info("R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
+            self._logger.info("LEDstrip: No pins, setting to R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
 
     def fadeRGB(self,RFinal,GFinal,BFinal):      
         if self.R_pwm != "" and self.G_pwm != "" and self.B_pwm != "":
@@ -92,16 +92,18 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
                     self.BVal -= 1
                     self.pi.set_PWM_dutycycle(self.B_pwm, self.BVal)
                 time.sleep(0.01)
-                self._logger.info("R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
+            self._logger.info("LEDstrip faded to R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
         else:
             self.RVal=RFinal
             self.GVal=GFinal
             self.BVal=BFinal
-            self._logger.info("R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
+            self._logger.info("LEDstrip: No pins, setting to R "+str(self.RVal)+" G "+str(self.GVal)+" B "+str(self.BVal))
 
 
     def on_after_startup(self):
-        self._logger.info("----------Starting LED strip plugin----------")
+        self._logger.info("*********************************************")
+        self._logger.info("----------Starting LEDstrip plugin----------")
+        self._logger.info("*********************************************")
         if self._settings.get(["Rpin"]) != "" and self._settings.get(["Gpin"]) != "" and self._settings.get(["Bpin"]) != "": 
             self.R_pwm=int(self._settings.get(["Rpin"]))
             self.G_pwm=int(self._settings.get(["Gpin"]))
@@ -110,12 +112,9 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
         if self.current_state != "idle":
             self.setRGB(0,0,0)
 
-    def on_shutdown(self):
-        self._logger.info("----------Shutting LED strip plugin down----------")
-
     def on_print_progress(self, storage, path, progress):
-        self._logger.info(progress)
-        self._logger.info("LOGGING IT NAAW")
+        #self._logger.info(progress)
+        self._logger.info("LEDstrip logged progress change"+str(progress))
         self.fadeRGB(100-int(progress),int(progress),0)
         self.printprogress=progress
 
@@ -128,7 +127,9 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
         ]
 
     def on_shutdown(self):
-        self._logger.info("----------Shutting LED strip plugin down----------")
+        self._logger.info("**************************************************")
+        self._logger.info("----------Shutting LEDstrip plugin down----------")
+        self._logger.info("**************************************************")
         self.fadeRGB(0,0,0)                                                               # NEW
         self.pi.stop()                                                                    # NEW
 
@@ -151,7 +152,7 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
             self.R_pwm=int(self._settings.get(["Rpin"]))
             self.G_pwm=int(self._settings.get(["Gpin"]))
             self.B_pwm=int(self._settings.get(["Bpin"]))
-            self._logger.info("INIT RGB Pins: "+str(self.R_pwm)+str(self.G_pwm)+str(self.B_pwm))
+            self._logger.info("LEDstrip initialized RGB pins: "+str(self.R_pwm)+str(self.G_pwm)+str(self.B_pwm))
             self.RVal=self.GVal=self.BVal=0
             self.fadeRGB(temp_r_val,temp_g_val,temp_b_val)
 
@@ -165,14 +166,14 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
             self.R_pwm=int(self._settings.get(["Rpin"]))
             self.G_pwm=int(self._settings.get(["Gpin"]))
             self.B_pwm=int(self._settings.get(["Bpin"]))
-            self._logger.info("SAVE RGB Pins: "+str(self.R_pwm)+str(self.G_pwm)+str(self.B_pwm))
+            self._logger.info("LEDstrip saved RGB pins: "+str(self.R_pwm)+str(self.G_pwm)+str(self.B_pwm))
             self.RVal=self.GVal=self.BVal=0
             self.fadeRGB(temp_r_val,temp_g_val,temp_b_val)
 
     def on_event(self, event, payload):
         try:
             self.current_state=self.supported_events[event]
-            self._logger.info(self.current_state)
+            self._logger.info("LEDstrip recorded supported event: "+str(self.current_state))
             if self.current_state == "resumed":
                 if self.BlinkTimer != 0:
                     self.BlinkTimer.cancel()
