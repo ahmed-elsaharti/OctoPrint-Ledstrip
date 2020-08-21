@@ -10,8 +10,7 @@ Set pigpiod to run on boot ```sudo systemctl enable pigpiod```
 
 Start pigpiod ```sudo systemctl start pigpiod```
 
-Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html)
-or manually using this URL:
+Install manually using this URL:
 
     https://github.com/ahmed-elsaharti/OctoPrint-Ledstrip/archive/master.zip
     
