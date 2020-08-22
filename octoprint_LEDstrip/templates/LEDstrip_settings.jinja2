@@ -1,4 +1,5 @@
-<h4>LEDstrip Settings</h4>
+<h4>LEDstrip settings</h4>
+<h5>LEDstrip pin settings</h5>
 <form class="form-horizontal">
 	<div class="control-group">
 		<label class="control-label">{{ _('Red pin') }}</label>
@@ -18,4 +19,62 @@
 			<input type="text" class="input-block-level" data-bind="value: settings.plugins.LEDstrip.Bpin"/>
 		</div>
     </div>
+	
+<h5>Printing Effects</h5>
+<form class="form-horizontal">
+    <div class="form-inline">
+    <label class="inline">Startup/Shutdown effect: </label>
+        <select class="input-large" data-bind="value: settings.plugins.LEDstrip.idle_effect">
+			<option value="none">None</option>
+			<option value="staticfade">Static fade</option>
+			<option value="blink">Blink</option>
+        </select>
+        <label class="inline"> Colour </label>
+        <input type="color" class="input-small" data-bind="value: settings.plugins.LEDstrip.idle_color">
+    </div>
+<br>
+    <div class="form-inline">
+    <label class="inline">Disconnect effect: </label>
+        <select class="input-large" data-bind="value: settings.plugins.LEDstrip.disconnected_effect">
+			<option value="none">None</option>
+			<option value="staticfade">Static fade</option>
+			<option value="blink">Blink</option>
+        </select>
+        <label class="inline"> Colour </label>
+        <input type="color" class="input-small" data-bind="value: settings.plugins.LEDstrip.disconnected_color">
+    </div>
+<br>
+    <div class="form-inline">
+    <label class="inline">Failed print effect: </label>
+        <select class="input-large" data-bind="value: settings.plugins.LEDstrip.failed_effect">
+			<option value="none">None</option>
+			<option value="staticfade">Static fade</option>
+			<option value="blink">Blink</option>
+        </select>
+        <label class="inline"> Colour </label>
+        <input type="color" class="input-small" data-bind="value: settings.plugins.LEDstrip.failed_color">
+    </div>
+<br>
+    <div class="form-inline">
+    <label class="inline">Print completed effect: </label>
+        <select class="input-large" data-bind="value: settings.plugins.LEDstrip.success_effect">
+			<option value="none">None</option>
+			<option value="staticfade">Static fade</option>
+			<option value="blink">Blink</option>
+        </select>
+        <label class="inline"> Colour </label>
+        <input type="color" class="input-small" data-bind="value: settings.plugins.LEDstrip.success_color">
+    </div>
+<br>
+    <div class="form-inline">
+    <label class="inline">Print paused effect: </label>
+        <select class="input-large" data-bind="value: settings.plugins.LEDstrip.paused_effect">
+			<option value="none">None</option>
+			<option value="staticfade">Static fade</option>
+			<option value="blink">Blink</option>
+        </select>
+        <label class="inline"> Colour </label>
+        <input type="color" class="input-small" data-bind="value: settings.plugins.LEDstrip.paused_color">
+    </div>
+<br>
 </form>
