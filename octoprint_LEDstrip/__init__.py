@@ -59,6 +59,49 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
 
 
 
+################## Shortening stuff
+
+#EFFECTS:
+
+    def staticfadefnc(self):
+        self.fadeRGB(self.event_colors[self.current_state]["R"],self.event_colors[self.current_state]["G"],self.event_colors[self.current_state]["B"])
+    def blinkfnc(self):
+        self.blinkR=self.event_colors[self.current_state]["R"]
+        self.blinkG=self.event_colors[self.current_state]["G"]
+        self.blinkB=self.event_colors[self.current_state]["B"]
+        self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
+        self.BlinkTimer.start()  
+
+
+#Effects function (for all supported states):
+
+    def effectfnc(self):
+        try:
+            if self.BlinkTimer != 0:
+                self.BlinkTimer.cancel()
+            self.effects_dict[self.event_effects[self.current_state]](self)
+        except KeyError:  # effect is 'none'
+            pass
+
+#Function call dicts    
+
+    effects_dict = {
+        'staticfade': staticfadefnc,
+        'blink': blinkfnc
+    }
+
+    event_dict = {
+        'idle': effectfnc,
+        'disconnected': effectfnc,
+        'success': effectfnc,
+        'failed': effectfnc,
+        'paused': effectfnc        
+    }
+
+####################################
+
+
+
     def blinkRGB(self):       
         if self.blinker == 1:
            self._logger.info("********RGB BLINK OFF********")
@@ -139,13 +182,14 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
             self.event_colors[key]["R"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[0]/2.55)
             self.event_colors[key]["G"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[1]/2.55)
             self.event_colors[key]["B"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[2]/2.55)
-            self._logger.info(key+" = "+str(self.event_colors[key]["R"])+" "+str(self.event_colors[key]["G"])+" "+str(self.event_colors[key]["B"]))         # For debugging
 
         
 
     def on_print_progress(self, storage, path, progress):
         #self._logger.info(progress)
-        self._logger.info("LEDstrip logged progress change"+str(progress))
+        if self.BlinkTimer != 0:
+            self.BlinkTimer.cancel()
+        self._logger.info("LEDstrip logged progress change "+str(progress))
         self.fadeRGB(100-int(progress),int(progress),0)
         self.printprogress=progress
 
@@ -199,7 +243,6 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
             self.event_colors[key]["R"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[0]/2.55)
             self.event_colors[key]["G"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[1]/2.55)
             self.event_colors[key]["B"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[2]/2.55)
-            self._logger.info(key+" = "+str(self.event_colors[key]["R"])+" "+str(self.event_colors[key]["G"])+" "+str(self.event_colors[key]["B"]))         # For debugging
      
 
     def on_settings_save(self,data):
@@ -222,8 +265,6 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
             self.event_colors[key]["R"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[0]/2.55)
             self.event_colors[key]["G"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[1]/2.55)
             self.event_colors[key]["B"]=int(tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))[2]/2.55)
-            self._logger.info(key+" = "+str(self.event_colors[key]["R"])+" "+str(self.event_colors[key]["G"])+" "+str(self.event_colors[key]["B"]))         # For debugging
-
 
     def on_event(self, event, payload):
         try:
@@ -233,72 +274,16 @@ class LEDstripPlugin(octoprint.plugin.StartupPlugin,
                 if self.BlinkTimer != 0:
                     self.BlinkTimer.cancel()
                 self.fadeRGB(100-int(self.printprogress),int(self.printprogress),0)             # Needs to be dependent on progress effect
-##################################################            
-            if self.current_state == "idle":
-                if self.BlinkTimer != 0:
-                    self.BlinkTimer.cancel()               
-                if self.event_effects[self.current_state] != "none":
-                    if self.event_effects[self.current_state] == "staticfade":
-                        self.fadeRGB(self.event_colors[self.current_state]["R"],self.event_colors[self.current_state]["G"],self.event_colors[self.current_state]["B"])
-                    elif self.event_effects[self.current_state] == "blink":
-                        self.blinkR=self.event_colors[self.current_state]["R"]
-                        self.blinkG=self.event_colors[self.current_state]["G"]
-                        self.blinkB=self.event_colors[self.current_state]["B"]
-                        self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-                        self.BlinkTimer.start()                   
-            if self.current_state == "disconnected":
-                if self.BlinkTimer != 0:
-                    self.BlinkTimer.cancel()
-                if self.event_effects[self.current_state] != "none":
-                    if self.event_effects[self.current_state] == "staticfade":
-                        self.fadeRGB(self.event_colors[self.current_state]["R"],self.event_colors[self.current_state]["G"],self.event_colors[self.current_state]["B"])
-                    elif self.event_effects[self.current_state] == "blink":
-                        self.blinkR=self.event_colors[self.current_state]["R"]
-                        self.blinkG=self.event_colors[self.current_state]["G"]
-                        self.blinkB=self.event_colors[self.current_state]["B"]
-                        self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-                        self.BlinkTimer.start()    
-            if self.current_state == "success":
-                if self.BlinkTimer != 0:
-                    self.BlinkTimer.cancel()
-                if self.event_effects[self.current_state] != "none":
-                    if self.event_effects[self.current_state] == "staticfade":
-                        self.fadeRGB(self.event_colors[self.current_state]["R"],self.event_colors[self.current_state]["G"],self.event_colors[self.current_state]["B"])
-                    elif self.event_effects[self.current_state] == "blink":
-                        self.blinkR=self.event_colors[self.current_state]["R"]
-                        self.blinkG=self.event_colors[self.current_state]["G"]
-                        self.blinkB=self.event_colors[self.current_state]["B"]
-                        self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-                        self.BlinkTimer.start()   
-            if self.current_state == "failed":
-                if self.BlinkTimer != 0:
-                    self.BlinkTimer.cancel()
-                if self.event_effects[self.current_state] != "none":
-                    if self.event_effects[self.current_state] == "staticfade":
-                        self.fadeRGB(self.event_colors[self.current_state]["R"],self.event_colors[self.current_state]["G"],self.event_colors[self.current_state]["B"])
-                    elif self.event_effects[self.current_state] == "blink":
-                        self.blinkR=self.event_colors[self.current_state]["R"]
-                        self.blinkG=self.event_colors[self.current_state]["G"]
-                        self.blinkB=self.event_colors[self.current_state]["B"]
-                        self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-                        self.BlinkTimer.start()   
-            if self.current_state == "paused":
-                if self.BlinkTimer != 0:
-                    self.BlinkTimer.cancel()
-                if self.event_effects[self.current_state] != "none":
-                    if self.event_effects[self.current_state] == "staticfade":
-                        self.fadeRGB(self.event_colors[self.current_state]["R"],self.event_colors[self.current_state]["G"],self.event_colors[self.current_state]["B"])
-                    elif self.event_effects[self.current_state] == "blink":
-                        self.blinkR=self.event_colors[self.current_state]["R"]
-                        self.blinkG=self.event_colors[self.current_state]["G"]
-                        self.blinkB=self.event_colors[self.current_state]["B"]
-                        self.BlinkTimer = RepeatedTimer(0.5,self.blinkRGB)
-                        self.BlinkTimer.start()   
+
+            self.event_dict[self.current_state](self)           #Much shorter
         except KeyError:  # The event isn't supported
             pass
 
 __plugin_name__ = "LEDstrip"
-__plugin_version__ = "0.1.3"
+__plugin_version__ = "0.1.4"
 __plugin_description__ = "Plugin to control 4 pin RGB LED strips"
 __plugin_pythoncompat__ = ">=2.7,<4"
 __plugin_implementation__ = LEDstripPlugin()
+
+
+# 8/22/2020
